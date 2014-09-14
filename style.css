@@ -1,0 +1,92 @@
+body {
+    background-color: darkgray;
+}
+
+.canvas {
+    border:1px solid #000000;
+    background-color: white;
+    display:inline;
+    height: 100%
+margin-left: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.canvasDashboard {
+    width: 110px;
+    height: 450px;
+    background-color: white;
+    border:1px solid #000000;
+    float:left;
+    margin: 0 auto;
+    text-align: center;
+    margin-left: 150px;
+    background-color: lightgray;
+    margin-right: 10px;
+}
+#colorPicker
+{
+    width:          30px;
+    height:         30px;
+    position: relative;
+    clear: both;
+    margin: 80px auto 20px;
+}
+
+#colorPicker .track {
+    background:     #EFEFEF url(text-color.png) no-repeat 50% 50%;
+    padding:        10px;
+    position:       absolute;
+    cursor:         crosshair;
+    float:          left;
+    left:           -71px;
+    top:            -71px;
+    display:        none;
+    border:         1px solid #ccc;
+    z-index:        10;
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    border-radius: 150px;
+
+}
+
+#colorPicker .color {
+    margin-left: 1px;
+    display:        block;
+    position:       relative;
+    z-index:        11;
+    background-color: #EFEFEF;
+    -webkit-border-radius: 27px;
+    -moz-border-radius: 27px;
+    border-radius: 27px;
+    cursor: pointer;
+}
+
+#colorPicker .colorInner {
+    margin-left: 1px;
+    width:          26px;
+    height:         26px;
+    -webkit-border-radius: 27px;
+    -moz-border-radius: 27px;
+    border-radius: 27px;
+}
+
+#colorPicker .dropdown {
+    list-style: none;
+    display: none;
+    width: 27px;
+    position: absolute;
+    top: 28px;
+    border: 1px solid #ccc;
+    left: 0;
+    z-index: 1000;
+}
+
+#colorPicker .dropdown li{
+    height: 25px;
+    cursor: pointer;
+}
+
+.but{
+    width:100px;
+}
