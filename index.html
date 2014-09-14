@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: darkgray;
+        }
+
+        .canvas {
+            border:1px solid #000000;
+            background-color: white;
+            display:inline;
+            height: 100%
+            margin-left: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .canvasDashboard {
+            width: 110px;
+            height: 450px;
+            background-color: white;
+            border:1px solid #000000;
+            float:left;
+            margin: 0 auto;
+            text-align: center;
+            margin-left: 150px;
+            background-color: lightgray;
+            margin-right: 10px;
+        }
+        #colorPicker
+        {
+            width:          30px;
+            height:         30px;
+            position: relative;
+            clear: both;
+            margin: 80px auto 20px;
+        }
+
+        #colorPicker .track {
+            background:     #EFEFEF url(text-color.png) no-repeat 50% 50%;
+            padding:        10px;
+            position:       absolute;
+            cursor:         crosshair;
+            float:          left;
+            left:           -71px;
+            top:            -71px;
+            display:        none;
+            border:         1px solid #ccc;
+            z-index:        10;
+            -webkit-border-radius: 150px;
+            -moz-border-radius: 150px;
+            border-radius: 150px;
+
+        }
+
+        #colorPicker .color {
+            margin-left: 1px;
+            display:        block;
+            position:       relative;
+            z-index:        11;
+            background-color: #EFEFEF;
+            -webkit-border-radius: 27px;
+            -moz-border-radius: 27px;
+            border-radius: 27px;
+            cursor: pointer;
+        }
+
+        #colorPicker .colorInner {
+            margin-left: 1px;
+            width:          26px;
+            height:         26px;
+            -webkit-border-radius: 27px;
+            -moz-border-radius: 27px;
+            border-radius: 27px;
+        }
+
+        #colorPicker .dropdown {
+            list-style: none;
+            display: none;
+            width: 27px;
+            position: absolute;
+            top: 28px;
+            border: 1px solid #ccc;
+            left: 0;
+            z-index: 1000;
+        }
+
+        #colorPicker .dropdown li{
+            height: 25px;
+            cursor: pointer;
+        }
+
+        .but{
+            width:100px;
+        }
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="jquery.tinycolorpicker.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color: darkgray">
+<div id="canvas-container" width="850">
+    <div class="canvasDashboard">
+        <br>
+        <div class="btn-group" style="margin-left: 9px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-lg" data-toggle="dropdown">
+                <i class="fa fa-pencil"></i><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="text-align: center">
+                <li><button class="but btn-default" value="2"><h4> Small</h4></button></li>
+                <li><button class="but btn-default" value="4"><h4> Medium</h4></button></li>
+                <li><button class="but btn-default" value="8"><h4> Large</h4></button></li>
+                <li><button class="but btn-default" value="16"><h4> X-Large</h4></button></li>
+            </ul>
+        </div>
+        <a id="color" value="10" style="display:hidden;"></a>
+        <br>
+        <button id="eraser" class="btn btn-default btn-lg" style="margin-top: 10px; margin-left:1px;"><i class="fa fa-eraser"></i></button>
+        <button id="clear" class="btn btn-default btn-lg" style="margin-top: 10px;"><i class="fa fa-file-text-o"></i> Clear</button>
+        <button id="save" class="btn btn-default btn-lg" style="margin-top: 10px;"><i class="fa fa-floppy-o"></i> Save</button>
+
+
+
+        <div id="colorPicker">
+            <a class="color"><div class="colorInner"></div></a>
+            <div class="track" style="display: none"></div>
+            <ul class="dropdown"><li></li></ul>
+            <input type="hidden" class="colorInput"/>
+        </div>
+
+    </div>
+    <canvas class="canvas" id="canvas" width="750" height="500">
+        Unfortunately, your browser does not seem to support canvas.
+    </canvas>
+</div>
+</body>
+<script>
+    $(document).ready(function()
+    {
+        var box = $('#colorPicker');
+        box.tinycolorpicker();
+
+        var box2 = box.data("plugin_tinycolorpicker");
+        box2.setColor("#000000");
+
+        $("#eraser").click(function(){
+            $('#colorPicker').data("plugin_tinycolorpicker").setColor("#ffffff");
+        });
+
+        $(".but").click(function(){
+            $("#color").val($(this).val());
+        });
+
+        $("#clear").click(function(){
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+            clickX = [];
+            clickY = [];
+            clickDrag = [];
+            clickColor = [];
+            clickSize = [];
+        });
+
+        $("#save").click(function(){
+            var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            window.location.href=image;
+        });
+    });
+
+    context = document.getElementById('canvas').getContext("2d");
+    var paint = false;
+
+    $('#canvas').mousedown(function (e) {
+        var mouseX = e.pageX - this.offsetLeft;
+        var mouseY = e.pageY - this.offsetTop;
+
+        paint = true;
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        redraw();
+    });
+
+    $('#canvas').mousemove(function (e) {
+        if (paint) {
+            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+            redraw();
+        }
+    });
+
+    $('#canvas').mouseleave(function (e) {
+        paint = false;
+    });
+
+    $('#canvas').mouseup(function (e) {
+        paint = false;
+    });
+
+
+    var clickX = new Array();
+    var clickY = new Array();
+    var clickDrag = new Array();
+    var clickColor = new Array();
+    var clickSize = new Array();
+    var paint;
+
+    function addClick(x, y, dragging) {
+        clickX.push(x);
+        clickY.push(y);
+        clickDrag.push(dragging);
+        clickColor.push($('#colorPicker').data("plugin_tinycolorpicker").colorHex);
+        clickSize.push($("#color").val());
+    }
+
+    function redraw() {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+        context.lineJoin = "round";
+        var radius;
+        for (var i = 0; i < clickX.length; i++) {
+
+
+            context.beginPath();
+            if (clickDrag[i] && i) {
+                context.moveTo(clickX[i - 1], clickY[i - 1]);
+            } else {
+                context.moveTo(clickX[i] - 1, clickY[i]);
+            }
+            context.lineTo(clickX[i], clickY[i]);
+            context.closePath();
+            context.strokeStyle = clickColor[i];
+            context.lineWidth = clickSize[i];
+            context.stroke();
+        }
+    }
+</script>
+</html>
+
